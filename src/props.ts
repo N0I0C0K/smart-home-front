@@ -8,5 +8,9 @@ export enum nodeType {
 export interface NodeProps {
   nodeid: string
   alive: boolean
-  nodeType: nodeType
+  _type: nodeType
+  name: string
+  position: string
+  value?: number
+  lastResponseTime?: number
 }

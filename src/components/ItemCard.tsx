@@ -3,8 +3,9 @@ import { Badge, Box, Card, Typography } from '@mui/joy'
 export const ItemCard: React.FC<{
   title: string
   subtitle: string
+  onClick?: () => void
   alive?: boolean
-}> = ({ title, subtitle, alive = true }) => {
+}> = ({ title, subtitle, alive = true, onClick }) => {
   return (
     <Box
       sx={{
@@ -15,6 +16,7 @@ export const ItemCard: React.FC<{
         borderRadius: 'md',
         height: '80px',
       }}
+      onClick={onClick}
     >
       <Typography level='body1' fontWeight={500}>
         {title}

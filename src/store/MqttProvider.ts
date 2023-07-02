@@ -1,4 +1,4 @@
-import mqtt from 'mqtt'
+import mqtt from 'mqtt-browser'
 import { action, observable } from 'mobx'
 
 type Callback<T> = (p: T) => void
@@ -24,8 +24,8 @@ class Event<T> {
     this.actions.clear()
   }
 }
-export const mqttProvider = mqtt.connect('test.mosquitto.org', {
-  port: 1883,
+export const mqttProvider = mqtt.connect('http://broker-cn.emqx.io:8083/mqtt', {
+  protocol: 'ws',
 })
 
 export const mqttStatus = observable<{
@@ -34,7 +34,35 @@ export const mqttStatus = observable<{
   connected: false,
 })
 
+var regist_topic_list: {
+  topic: string
+  callback: (topic: string, message: string) => void
+}[] = []
+
+function checkPattern(pattern: string, target: string): boolean {
+  const regexPattern = pattern.replace(/#/g, '.*')
+  const regex = new RegExp(regexPattern)
+  return regex.test(target)
+}
+
+export function regist_topic(
+  reg_topic: string,
+  callback: (topic: string, message: string) => void
+) {
+  mqttProvider.subscribe(reg_topic, { qos: 1 })
+  regist_topic_list.push({ topic: reg_topic, callback: callback })
+}
+
 mqttProvider.on('connect', () => {
   mqttStatus.connected = true
-  mqttProvider.on('message', (topic, message) => {})
+  console.log('mqtt connected')
+})
+
+mqttProvider.on('message', (topic, message) => {
+  console.log('mqtt message', topic, message.toString())
+  for (const reg_topic of regist_topic_list) {
+    if (checkPattern(reg_topic.topic, topic)) {
+      reg_topic.callback(topic, message.toString())
+    }
+  }
 })

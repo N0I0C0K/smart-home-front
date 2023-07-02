@@ -32,9 +32,9 @@ export function BottomTab() {
           mx: 'auto',
           backdropFilter: 'blur(10px)',
           backgroundColor: 'rgba(255, 255, 255, 0.6)',
-          boxShadow: theme.shadow.md,
+          boxShadow: theme.shadow.xl,
           '--Tabs-gap': '8px',
-          '--joy-shadowChannel': theme.vars.palette[colors[index]].darkChannel,
+          //'--joy-shadowChannel': theme.vars.palette[colors[index]].darkChannel,
           [`& .${tabClasses.root}`]: {
             boxShadow: 'none',
             borderRadius: 'lg',
