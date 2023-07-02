@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/joy": "^5.0.0-alpha.85",
+    "@mui/material": "npm:@mui/joy@latest",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -10,11 +15,17 @@
     "@types/node": "^16.18.38",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
+    "mobx": "^6.9.0",
+    "mobx-react-lite": "^3.4.3",
+    "mqtt": "^4.3.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
+  },
+  "resolutions": {
+    "@mui/material": "npm:@mui/joy@latest"
   },
   "scripts": {
     "start": "react-scripts start",
