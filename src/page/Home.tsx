@@ -14,8 +14,6 @@ import { observer } from 'mobx-react-lite'
 import { NodeProps, nodeType } from '../props'
 import React from 'react'
 
-const items = [1, 2, 3, 4]
-
 export const Home = observer(() => {
   const [open, setOpen] = React.useState(false)
   const [targetNode, setTargetNode] = React.useState<NodeProps | null>(null)
@@ -24,12 +22,23 @@ export const Home = observer(() => {
   React.useEffect(() => {
     setSliderValue(targetNode?.value ?? 0)
   }, [targetNode])
+
+  React.useEffect(() => {
+    const timer = setTimeout(()=>{
+      if(!targetNode)
+        return
+      centerManager.controlNode(targetNode!.nodeid, sliderValue)
+    },1000)
+    return ()=>{
+      clearTimeout(timer)
+    }
+  }, [sliderValue])
   return (
     <Box display={'flex'} flexDirection={'column'} gap={2}>
       <Box ml={'auto'}>
         <IconButton
-          variant='plain'
-          color='neutral'
+          variant="plain"
+          color="neutral"
           size={'lg'}
           onClick={() => {
             centerManager.checkAlive()
@@ -39,16 +48,16 @@ export const Home = observer(() => {
         </IconButton>
       </Box>
       <Box mb={10}>
-        <Typography level='h2' fontWeight={700}>
+        <Typography level="h2" fontWeight={700}>
           Monky's home
         </Typography>
-        <Typography level='body2'>
+        <Typography level="body2">
           {centerManager.nodes.length}个设备
         </Typography>
       </Box>
       <Box>
         <Typography
-          level='h4'
+          level="h4"
           fontWeight={600}
           sx={{
             mb: 1,
@@ -81,7 +90,6 @@ export const Home = observer(() => {
         open={open}
         onClose={() => {
           setOpen(false)
-          centerManager.controlNode(targetNode!.nodeid, sliderValue)
         }}
         sx={{
           display: 'flex',
@@ -96,7 +104,7 @@ export const Home = observer(() => {
           }}
         >
           <Typography
-            level='h4'
+            level="h4"
             fontWeight={600}
             sx={{
               mx: 'auto',
@@ -112,11 +120,11 @@ export const Home = observer(() => {
             }}
             value={sliderValue}
             step={1}
-            orientation='vertical'
+            orientation="vertical"
             onChange={(e, v) => {
               setSliderValue(v as number)
             }}
-            valueLabelDisplay='on'
+            valueLabelDisplay="on"
           ></Slider>
         </ModalDialog>
       </Modal>
