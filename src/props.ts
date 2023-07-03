@@ -6,7 +6,7 @@ export enum nodeType {
 }
 
 export interface NodeProps {
-  nodeid: string
+  id: string
   alive: boolean
   _type: nodeType
   name: string

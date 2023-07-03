@@ -24,12 +24,11 @@ export const Home = observer(() => {
   }, [targetNode])
 
   React.useEffect(() => {
-    const timer = setTimeout(()=>{
-      if(!targetNode)
-        return
-      centerManager.controlNode(targetNode!.nodeid, sliderValue)
-    },1000)
-    return ()=>{
+    const timer = setTimeout(() => {
+      if (!targetNode) return
+      centerManager.controlNode(targetNode!.id, sliderValue)
+    }, 1000)
+    return () => {
       clearTimeout(timer)
     }
   }, [sliderValue])
@@ -55,35 +54,55 @@ export const Home = observer(() => {
           {centerManager.nodes.length}个设备
         </Typography>
       </Box>
+      {centerManager.positions.map((posName) => {
+        return (
+          <Box>
+            <Typography
+              level="h4"
+              fontWeight={600}
+              sx={{
+                mb: 1,
+              }}
+            >
+              {posName}
+            </Typography>
+            <Grid container spacing={2}>
+              {centerManager.nodes
+                .filter((node) => node.position === posName)
+                .map((i, v) => {
+                  return (
+                    <Grid xs={6} key={v}>
+                      <ItemCard
+                        title={i.name}
+                        subtitle={`${i.position} | ${i.value ?? 'none'}`}
+                        onClick={() => {
+                          setTargetNode(i)
+                          if (i._type === nodeType.bool_control) {
+                            centerManager.controlNode(
+                              i.id,
+                              i.value! > 0 ? 0 : 1
+                            )
+                          } else if (i._type === nodeType.num_control) {
+                            setOpen(true)
+                          }
+                        }}
+                      />
+                    </Grid>
+                  )
+                })}
+            </Grid>
+          </Box>
+        )
+      })}
+
       <Box>
-        <Typography
-          level="h4"
-          fontWeight={600}
-          sx={{
-            mb: 1,
-          }}
-        >
-          客厅
-        </Typography>
         <Grid container spacing={2}>
-          {centerManager.nodes.map((i, v) => {
-            return (
-              <Grid xs={6} key={v}>
-                <ItemCard
-                  title={i.name}
-                  subtitle={`${i.position} | ${i.value ?? 'none'}`}
-                  onClick={() => {
-                    setTargetNode(i)
-                    if (i._type === nodeType.bool_control) {
-                      centerManager.controlNode(i.nodeid, i.value! > 0 ? 0 : 1)
-                    } else if (i._type === nodeType.num_control) {
-                      setOpen(true)
-                    }
-                  }}
-                />
-              </Grid>
-            )
-          })}
+          <Grid xs={6}>
+            <ItemCard title="11" subtitle="111" alive={false} />
+          </Grid>
+          <Grid xs={6}>
+            <ItemCard title="11" subtitle="111" alive={true} />
+          </Grid>
         </Grid>
       </Box>
       <Modal

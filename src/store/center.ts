@@ -1,4 +1,4 @@
-import { observable } from 'mobx'
+import { observable, reaction } from 'mobx'
 import { NodeProps, nodeType } from '../props'
 import { mqttProvider, regist_topic } from './MqttProvider'
 
@@ -9,6 +9,7 @@ const AlivePublishTopic = `${base}/publish/center/alive`
 
 export const centerManager = observable<{
   nodes: NodeProps[]
+  positions: string[]
   init: () => void
   checkAlive: () => void
   addNode: (pars: string[]) => void
@@ -16,6 +17,7 @@ export const centerManager = observable<{
   controlNode: (nodeid: string, value: number) => void
 }>({
   nodes: [],
+  positions: ['客厅', '卧室', '厨房', '卫生间'],
   checkAlive() {
     mqttProvider.publish(AlivePublishTopic, 'hi')
     //remove not response more than 20s
@@ -28,7 +30,7 @@ export const centerManager = observable<{
   addNode(pars) {
     const [nodeid, nodeType, nodeName, nodePosition, nodeVal] = pars
     const node: NodeProps = {
-      nodeid: nodeid,
+      id: nodeid,
       alive: true,
       _type: parseInt(nodeType),
       name: nodeName,
@@ -37,12 +39,18 @@ export const centerManager = observable<{
       lastResponseTime: Date.now(),
     }
     //if node already exists, update it
-    const index = this.nodes.findIndex((n) => n.nodeid === node.nodeid)
+    const index = this.nodes.findIndex((n) => n.id === node.id)
     if (index !== -1) {
       this.nodes[index] = node
       return
     }
     this.nodes.push(node)
+    // add node pos to position
+    const pos = node.position
+    if (this.positions.indexOf(pos) === -1) {
+      this.positions.push(pos)
+    }
+    console.log(` pos: ${pos}, position: ${this.positions}`)
   },
   init() {
     console.log('init center manager')
@@ -75,7 +83,7 @@ export const centerManager = observable<{
   },
   updateNode(pars) {
     const [nodeid, nodeType, nodeRawVal, nodeParseVal] = pars
-    const index = this.nodes.findIndex((n) => n.nodeid === nodeid)
+    const index = this.nodes.findIndex((n) => n.id === nodeid)
     if (index === -1) {
       console.error('Node not found')
       return
@@ -83,7 +91,7 @@ export const centerManager = observable<{
     this.nodes[index].value = parseInt(nodeParseVal)
   },
   controlNode(nodeid: string, value: number) {
-    const index = this.nodes.findIndex((n) => n.nodeid === nodeid)
+    const index = this.nodes.findIndex((n) => n.id === nodeid)
     if (index === -1) {
       console.error('Node not found')
       return
@@ -105,3 +113,24 @@ export const centerManager = observable<{
 })
 
 centerManager.init()
+
+// reaction(
+//   () => centerManager.nodes.length,
+//   () => {
+//     console.log('centerManager.nodes.length changed')
+//     //Count the pos of all nodes, and output the position according to the number of nodes from large to small
+//     const posMap = new Map<string, number>()
+//     centerManager.nodes.forEach((n) => {
+//       if (posMap.has(n.position)) {
+//         posMap.set(n.position, posMap.get(n.position)! + 1)
+//       } else {
+//         posMap.set(n.position, 1)
+//       }
+//     })
+//     const posArr = Array.from(posMap.entries())
+//     posArr.sort((a, b) => {
+//       return b[1] - a[1]
+//     })
+//     centerManager.positions = posArr.map((p) => p[0])
+//   }
+// )
