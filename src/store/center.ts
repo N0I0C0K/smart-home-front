@@ -3,7 +3,7 @@ import { NodeProps, nodeType } from '../props'
 import { mqttProvider, regist_topic } from './MqttProvider'
 
 const base = 'acddb'
-
+const alive_step_time = 1000 * 60
 const AliveListenTopic = `${base}/listen/center/alive`
 const AlivePublishTopic = `${base}/publish/center/alive`
 
@@ -22,7 +22,7 @@ export const centerManager = observable<{
     const now = Date.now()
     this.nodes = this.nodes.filter((n) => {
       if (n.lastResponseTime === undefined) return true
-      return now - n.lastResponseTime < 1000 * 20
+      return now - n.lastResponseTime < alive_step_time * 1.2
     })
   },
   addNode(pars) {
@@ -71,7 +71,7 @@ export const centerManager = observable<{
 
     setInterval(() => {
       this.checkAlive()
-    }, 1000 * 10)
+    }, alive_step_time)
   },
   updateNode(pars) {
     const [nodeid, nodeType, nodeRawVal, nodeParseVal] = pars
