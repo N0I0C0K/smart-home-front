@@ -94,8 +94,7 @@ export const Home = observer(() => {
           </Box>
         )
       })}
-      <Box minHeight={'20vh'}/>
-      {/* <Box>
+      <Box>
         <Grid container spacing={2}>
           <Grid xs={6}>
             <ItemCard title="11" subtitle="111" alive={false} />
@@ -104,7 +103,8 @@ export const Home = observer(() => {
             <ItemCard title="11" subtitle="111" alive={true} />
           </Grid>
         </Grid>
-      </Box> */}
+      </Box>
+      <Box minHeight={'20vh'} />
       <Modal
         open={open}
         onClose={() => {

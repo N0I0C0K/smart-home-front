@@ -1,4 +1,4 @@
-import { Badge, Box, Card, Typography } from '@mui/joy'
+import { Badge, Box, Card, CircularProgress, Typography } from '@mui/joy'
 import { NodeProps } from '../props'
 import './ItemCard.css'
 
@@ -20,7 +20,15 @@ export const ItemCard: React.FC<{
       }}
       onClick={onClick}
     >
-      <Typography level="body1" fontWeight={500}>
+      <Typography
+        level="body1"
+        fontWeight={500}
+        endDecorator={
+          alive ? null : (
+            <CircularProgress size="sm" variant="plain" color="warning" />
+          )
+        }
+      >
         {title}
       </Typography>
       <Typography level="body2" color="neutral">

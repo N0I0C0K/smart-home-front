@@ -1,9 +1,9 @@
-import { observable, reaction } from 'mobx'
+import { action, observable, reaction } from 'mobx'
 import { NodeProps, nodeType } from '../props'
 import { mqttProvider, regist_topic } from './MqttProvider'
 
 const base = 'acddb'
-const alive_step_time = 1000 * 60
+const alive_step_time = 1000 * 30
 const AliveListenTopic = `${base}/listen/center/alive`
 const AlivePublishTopic = `${base}/publish/center/alive`
 
@@ -24,7 +24,7 @@ export const centerManager = observable<{
     const now = Date.now()
     this.nodes = this.nodes.filter((n) => {
       if (n.lastResponseTime === undefined) return true
-      return now - n.lastResponseTime < alive_step_time * 1.2
+      return now - n.lastResponseTime < alive_step_time * 10
     })
   },
   addNode(pars) {
@@ -77,9 +77,23 @@ export const centerManager = observable<{
       this.updateNode(data)
     })
 
-    setInterval(() => {
-      this.checkAlive()
-    }, alive_step_time)
+    setInterval(
+      action(() => {
+        for (const node of this.nodes) {
+          if (
+            !node.lastResponseTime ||
+            Date.now() - node.lastResponseTime > alive_step_time * 2
+          ) {
+            node.alive = false
+          }
+        }
+      }),
+      alive_step_time
+    )
+
+    // setInterval(() => {
+    //   this.checkAlive()
+    // }, alive_step_time)
   },
   updateNode(pars) {
     const [nodeid, nodeType, nodeRawVal, nodeParseVal] = pars
