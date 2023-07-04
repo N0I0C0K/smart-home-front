@@ -1,5 +1,6 @@
 .item-card {
   transition: all 50ms linear;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .item-card:active {
@@ -7,10 +8,14 @@
 }
 
 .alive {
-  background-color: rgba(255, 255, 255, 0.6);
+  /* background-color: rgba(255, 255, 255, 0.6); */
 }
 
 .dead {
   background-color: rgba(255, 255, 255, 0);
   filter: blur(1px);
+}
+
+.deactive {
+  background-color: rgba(206, 206, 206, 0.6);
 }

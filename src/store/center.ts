@@ -10,6 +10,7 @@ const AlivePublishTopic = `${base}/publish/center/alive`
 export const centerManager = observable<{
   nodes: NodeProps[]
   positions: string[]
+  lastCheckTime: number
   init: () => void
   checkAlive: () => void
   addNode: (pars: string[]) => void
@@ -18,9 +19,12 @@ export const centerManager = observable<{
 }>({
   nodes: [],
   positions: ['客厅', '卧室', '厨房', '卫生间'],
+  lastCheckTime: 0,
   checkAlive() {
+    if (Date.now() - this.lastCheckTime < 5 * 1000) return
+    this.lastCheckTime = Date.now()
     mqttProvider.publish(AlivePublishTopic, 'hi')
-    //remove not response more than 20s
+    //remove not response more than 10 times
     const now = Date.now()
     this.nodes = this.nodes.filter((n) => {
       if (n.lastResponseTime === undefined) return true

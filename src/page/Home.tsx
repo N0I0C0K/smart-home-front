@@ -13,6 +13,7 @@ import { centerManager } from '../store/center'
 import { observer } from 'mobx-react-lite'
 import { NodeProps, nodeType } from '../props'
 import React from 'react'
+import SyncIcon from '@mui/icons-material/Sync'
 
 export const Home = observer(() => {
   const [open, setOpen] = React.useState(false)
@@ -75,6 +76,14 @@ export const Home = observer(() => {
                       <ItemCard
                         title={i.name}
                         subtitle={`${i.position} | ${i.value ?? 'none'}`}
+                        alive={i.alive}
+                        itemType={
+                          i._type === nodeType.bool_control ||
+                          i._type === nodeType.bool_sensor
+                            ? 'bool'
+                            : 'number'
+                        }
+                        value={i.value}
                         onClick={() => {
                           setTargetNode(i)
                           if (i._type === nodeType.bool_control) {
@@ -97,10 +106,22 @@ export const Home = observer(() => {
       <Box>
         <Grid container spacing={2}>
           <Grid xs={6}>
-            <ItemCard title="11" subtitle="111" alive={false} />
+            <ItemCard
+              title="台灯"
+              subtitle="客厅"
+              alive={true}
+              itemType="bool"
+              value={0}
+            />
           </Grid>
           <Grid xs={6}>
-            <ItemCard title="11" subtitle="111" alive={true} />
+            <ItemCard
+              title="可调光台灯"
+              subtitle="客厅"
+              alive={true}
+              itemType="number"
+              value={88}
+            />
           </Grid>
         </Grid>
       </Box>
