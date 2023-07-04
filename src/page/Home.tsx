@@ -56,7 +56,7 @@ export const Home = observer(() => {
       </Box>
       {centerManager.positions.map((posName) => {
         return (
-          <Box>
+          <Box key={posName}>
             <Typography
               level="h4"
               fontWeight={600}
@@ -95,7 +95,7 @@ export const Home = observer(() => {
         )
       })}
 
-      <Box>
+      {/* <Box>
         <Grid container spacing={2}>
           <Grid xs={6}>
             <ItemCard title="11" subtitle="111" alive={false} />
@@ -104,7 +104,7 @@ export const Home = observer(() => {
             <ItemCard title="11" subtitle="111" alive={true} />
           </Grid>
         </Grid>
-      </Box>
+      </Box> */}
       <Modal
         open={open}
         onClose={() => {
