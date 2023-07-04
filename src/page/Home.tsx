@@ -94,7 +94,7 @@ export const Home = observer(() => {
           </Box>
         )
       })}
-
+      <Box minHeight={'20vh'}/>
       {/* <Box>
         <Grid container spacing={2}>
           <Grid xs={6}>
