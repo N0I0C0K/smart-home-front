@@ -103,7 +103,7 @@ export const Home = observer(() => {
           </Box>
         )
       })}
-      <Box>
+      {/* <Box>
         <Grid container spacing={2}>
           <Grid xs={6}>
             <ItemCard
@@ -124,7 +124,7 @@ export const Home = observer(() => {
             />
           </Grid>
         </Grid>
-      </Box>
+      </Box> */}
       <Box minHeight={'20vh'} />
       <Modal
         open={open}
