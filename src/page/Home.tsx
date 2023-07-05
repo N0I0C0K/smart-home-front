@@ -75,7 +75,7 @@ export const Home = observer(() => {
                     <Grid xs={6} key={v}>
                       <ItemCard
                         title={i.name}
-                        subtitle={`${i.position} | ${i.value ?? 'none'}`}
+                        subtitle={i.position}
                         alive={i.alive}
                         itemType={
                           i._type === nodeType.bool_control ||
