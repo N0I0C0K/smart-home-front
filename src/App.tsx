@@ -5,12 +5,13 @@ import { BottomTab } from './components/BottomTab'
 import { Box } from '@mui/joy'
 import { Home } from './page/Home'
 import { WarnModal } from './components/WarnModal'
+import { Outlet } from 'react-router-dom'
 
 function App() {
   return (
     <CssVarsProvider>
       <Box className="App" p={2}>
-        <Home />
+        <Outlet />
       </Box>
       <BottomTab />
       <WarnModal />

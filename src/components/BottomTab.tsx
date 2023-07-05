@@ -8,10 +8,49 @@ import HomeOutlined from '@mui/icons-material/HomeOutlined'
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
 import Search from '@mui/icons-material/Search'
 import Person from '@mui/icons-material/Person'
+import ListIcon from '@mui/icons-material/List'
+import { useLocation, useNavigate, useNavigation } from 'react-router-dom'
 
 export function BottomTab() {
   const [index, setIndex] = React.useState(0)
+  const goto = useNavigate()
   const colors = ['primary', 'info', 'danger', 'success'] as const
+  const tabs: { name: string; path: string; icon: React.ReactElement }[] = [
+    {
+      name: 'Home',
+      path: '/home',
+      icon: <HomeOutlined />,
+    },
+    {
+      name: 'Record',
+      path: '/record',
+      icon: <ListIcon />,
+    },
+    {
+      name: 'Search',
+      path: '/search',
+      icon: <Search />,
+    },
+    {
+      name: 'Profile',
+      path: '/profile',
+      icon: <Person />,
+    },
+  ]
+
+  const { pathname } = useLocation()
+  React.useEffect(() => {
+    console.log(pathname)
+
+    tabs.some((val, idx) => {
+      if (pathname.startsWith(val.path)) {
+        setIndex(idx)
+        return true
+      }
+      return false
+    })
+  }, [pathname])
+
   return (
     <Box
       sx={{
@@ -22,10 +61,13 @@ export function BottomTab() {
       }}
     >
       <Tabs
-        size='lg'
-        aria-label='Bottom Navigation'
+        size="lg"
+        aria-label="Bottom Navigation"
         value={index}
-        onChange={(event, value) => setIndex(value as number)}
+        onChange={(event, value) => {
+          setIndex(value as number)
+          goto(`${tabs[value as number].path}`)
+        }}
         sx={(theme) => ({
           borderRadius: 'xl',
           //maxWidth: 400,
@@ -49,47 +91,23 @@ export function BottomTab() {
         })}
       >
         <TabList
-          variant='plain'
+          variant="plain"
           sx={{
             '--ListItemDecorator-size': '28px',
           }}
         >
-          <Tab
-            orientation='vertical'
-            {...(index === 0 && { variant: 'soft', color: colors[0] })}
-          >
-            <ListItemDecorator>
-              <HomeOutlined />
-            </ListItemDecorator>
-            Home
-          </Tab>
-          <Tab
-            orientation='vertical'
-            {...(index === 1 && { variant: 'soft', color: colors[1] })}
-          >
-            <ListItemDecorator>
-              <FavoriteBorder />
-            </ListItemDecorator>
-            Likes
-          </Tab>
-          <Tab
-            orientation='vertical'
-            {...(index === 2 && { variant: 'soft', color: colors[2] })}
-          >
-            <ListItemDecorator>
-              <Search />
-            </ListItemDecorator>
-            Search
-          </Tab>
-          <Tab
-            orientation='vertical'
-            {...(index === 3 && { variant: 'soft', color: colors[3] })}
-          >
-            <ListItemDecorator>
-              <Person />
-            </ListItemDecorator>
-            Profile
-          </Tab>
+          {tabs.map((val, idx) => {
+            return (
+              <Tab
+                key={idx}
+                orientation="vertical"
+                {...(index === idx && { variant: 'soft', color: colors[idx] })}
+              >
+                <ListItemDecorator>{val.icon}</ListItemDecorator>
+                {val.name}
+              </Tab>
+            )
+          })}
         </TabList>
       </Tabs>
     </Box>
