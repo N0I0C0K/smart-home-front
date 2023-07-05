@@ -3,6 +3,8 @@ import { NodeProps } from '../props'
 import SettingsIcon from '@mui/icons-material/Settings'
 import TuneIcon from '@mui/icons-material/Tune'
 import './ItemCard.css'
+import { useEffect } from 'react'
+import { showWarn } from './WarnModal'
 
 export const ItemCard: React.FC<{
   title: string
@@ -12,6 +14,16 @@ export const ItemCard: React.FC<{
   itemType: 'bool' | 'number'
   value?: number
 }> = ({ title, subtitle, alive = true, onClick, itemType, value = 0 }) => {
+  useEffect(() => {
+    if (!title.includes('传感')) return
+    if (value) {
+      showWarn({
+        title,
+        subtitle: `${subtitle} 发生了情况！`,
+      })
+    }
+  }, [value, title])
+
   return (
     <Box
       className={`item-card ${alive ? 'alive' : 'dead'} ${

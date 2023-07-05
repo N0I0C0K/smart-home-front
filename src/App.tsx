@@ -4,14 +4,16 @@ import './App.css'
 import { BottomTab } from './components/BottomTab'
 import { Box } from '@mui/joy'
 import { Home } from './page/Home'
+import { WarnModal } from './components/WarnModal'
 
 function App() {
   return (
     <CssVarsProvider>
-      <Box className='App' p={2}>
+      <Box className="App" p={2}>
         <Home />
       </Box>
       <BottomTab />
+      <WarnModal />
     </CssVarsProvider>
   )
 }
