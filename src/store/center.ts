@@ -1,29 +1,40 @@
 import { action, observable, reaction } from 'mobx'
 import { NodeProps, nodeType } from '../props'
-import { mqttProvider, regist_topic } from './MqttProvider'
+import { cancel_all_topic, mqttProvider, regist_topic } from './MqttProvider'
 
-const base = 'acddb'
+//const base = 'acddb'
 const alive_step_time = 1000 * 30
-const AliveListenTopic = `${base}/listen/center/alive`
-const AlivePublishTopic = `${base}/publish/center/alive`
+//const AliveListenTopic = `${base}/listen/center/alive`
+//const AlivePublishTopic = `${base}/publish/center/alive`
+
+function load_base() {
+  return localStorage.getItem('base') ?? 'acddb'
+}
+
+function save_base(base: string) {
+  localStorage.setItem('base', base)
+}
 
 export const centerManager = observable<{
   nodes: NodeProps[]
   positions: string[]
   lastCheckTime: number
+  base: string
   init: () => void
   checkAlive: () => void
   addNode: (pars: string[]) => void
   updateNode: (pars: string[]) => void
   controlNode: (nodeid: string, value: number) => void
+  changeBase: (base: string) => void
 }>({
   nodes: [],
+  base: 'acddb',
   positions: ['客厅', '卧室', '厨房', '卫生间'],
   lastCheckTime: 0,
   checkAlive() {
     if (Date.now() - this.lastCheckTime < 5 * 1000) return
     this.lastCheckTime = Date.now()
-    mqttProvider.publish(AlivePublishTopic, 'hi')
+    mqttProvider.publish(`${this.base}/publish/center/alive`, 'hi')
     //remove not response more than 10 times
     const now = Date.now()
     this.nodes = this.nodes.filter((n) => {
@@ -58,7 +69,8 @@ export const centerManager = observable<{
   },
   init() {
     console.log('init center manager')
-    regist_topic(`${base}/listen/center/alive`, (topic, message) => {
+    this.base = load_base()
+    regist_topic(`${this.base}/listen/center/alive`, (topic, message) => {
       const data = message.split('|').filter((s) => {
         return s.length > 0
       })
@@ -71,7 +83,7 @@ export const centerManager = observable<{
         this.addNode(data.slice(i, i + 5))
       }
     })
-    regist_topic(`${base}/publish/sensor/#`, (topic, message) => {
+    regist_topic(`${this.base}/publish/sensor/#`, (topic, message) => {
       const data = message.split('|').filter((s) => s.length > 0)
       if (data.length !== 4) {
         console.error('Invalid data')
@@ -80,7 +92,6 @@ export const centerManager = observable<{
       }
       this.updateNode(data)
     })
-
     setInterval(
       action(() => {
         for (const node of this.nodes) {
@@ -94,10 +105,6 @@ export const centerManager = observable<{
       }),
       alive_step_time
     )
-
-    // setInterval(() => {
-    //   this.checkAlive()
-    // }, alive_step_time)
   },
   updateNode(pars) {
     const [nodeid, nodeType, nodeRawVal, nodeParseVal] = pars
@@ -124,9 +131,15 @@ export const centerManager = observable<{
     }
     console.log(`Control node ${nodeid} to ${value}`)
     mqttProvider.publish(
-      `${base}/publish/control/${nodeid}`,
+      `${this.base}/publish/control/${nodeid}`,
       `${nodeid}|${value}`
     )
+  },
+  changeBase(base) {
+    cancel_all_topic()
+    this.base = base
+    save_base(this.base)
+    this.init()
   },
 })
 

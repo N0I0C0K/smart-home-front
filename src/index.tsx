@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Home } from './page/Home'
 import { Box, Typography } from '@mui/joy'
 import { RecordPage } from './page/Record'
+import { ProfilePage } from './page/Profile'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: 'record',
         element: <RecordPage />,
+      },
+      {
+        path: 'profile',
+        element: <ProfilePage />,
       },
       {
         path: '*',

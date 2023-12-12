@@ -53,6 +53,20 @@ export function regist_topic(
   regist_topic_list.push({ topic: reg_topic, callback: callback })
 }
 
+export function cancel_topic(topic: string) {
+  const idx = regist_topic_list.findIndex((val) => val.topic === topic)
+  if (idx === -1) return
+  mqttProvider.unsubscribe(topic)
+  regist_topic_list.splice(idx, 1)
+}
+
+export function cancel_all_topic() {
+  regist_topic_list.forEach((element) => {
+    mqttProvider.unsubscribe(element.topic)
+  })
+  regist_topic_list.length = 0
+}
+
 mqttProvider.on('connect', () => {
   mqttStatus.connected = true
   console.log('mqtt connected')
